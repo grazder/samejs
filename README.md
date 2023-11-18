@@ -1,4 +1,4 @@
-# [WIP] samejs
+# samejs
 Streaming Audio Models Examples in JS
 
 ## Key concepts
