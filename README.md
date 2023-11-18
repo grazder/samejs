@@ -7,7 +7,7 @@ Streaming Audio Models Examples in JS
 2. Understandable for ML engineers who wants to provide their models to Web 
 3. Understandable for frontenders who wants to provide some ML models to Web
 
-## How to provide model to web?
+## How to provide models to web?
 
 1. [ONNXRuntime Web](https://onnxruntime.ai/docs/get-started/with-javascript.html)
 2. WASM via [emscripten](https://github.com/emscripten-core/emscripten) (CPP / C)
