@@ -1,5 +1,3 @@
-import {RingBuffer} from 'ringbuffer.js';
-
 class NoiseCancellationProcessor extends AudioWorkletProcessor {
     inputBuffer;
     outputBuffer;
@@ -9,7 +7,7 @@ class NoiseCancellationProcessor extends AudioWorkletProcessor {
     workletFrameSize = 128;
 
     processingDenoiseFramesCount = 0;
-    processingDenoiseFramesCountLimit = 300;xwi 
+    processingDenoiseFramesCountLimit = 300;
 
     denoiseLatencyFramesCount = 4;
     readyToReturnOutput = false;
@@ -19,7 +17,7 @@ class NoiseCancellationProcessor extends AudioWorkletProcessor {
     constructor(options) {
       super();
 
-      const ringBufferLength = leastCommonMultiple(this.workletFrameSize, this.denoiseFrameSize) * 2;
+      const ringBufferLength = 1000;
       this.inputBuffer = new RingBuffer(ringBufferLength, 1);
       this.outputBuffer = new RingBuffer(ringBufferLength, 1);
 

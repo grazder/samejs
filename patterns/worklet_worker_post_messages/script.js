@@ -14,8 +14,13 @@ async function startPipeline(event) {
     // Sample Rate is an important parameter because most ML models are trained on data with a single sample rate.
     const audioContext = new AudioContext({sampleRate: 48000});
 
+    ringbuffer_url = new URL('data_structures/ringbuffer.js', location.href)
+
+    const workletUrl = await URLFromFiles([
+        'audio-worklet.js', ringbuffer_url
+    ])
     // 1. Creating AudioWorklet from `audio_worklet.js`
-    await audioContext.audioWorklet.addModule('audio-worklet.js');
+    await audioContext.audioWorklet.addModule(workletUrl);
 
     // 2. Getting input from microphone
     stream = await navigator.mediaDevices.getUserMedia({
@@ -40,3 +45,16 @@ async function startPipeline(event) {
     // Microphone Stream (liveIn) -> AudioWorklet processor (audioProcessor) -> Headphones (default destination)
     liveIn.connect(audioProcessor).connect(audioContext.destination)
 }
+
+function URLFromFiles(files) {
+    const promises = files.map((file) =>
+      fetch(file).then((response) => response.text())
+    );
+  
+    return Promise.all(promises).then((texts) => {
+      const text = texts.join("");
+      const blob = new Blob([text], { type: "application/javascript" });
+  
+      return URL.createObjectURL(blob);
+    });
+  }
