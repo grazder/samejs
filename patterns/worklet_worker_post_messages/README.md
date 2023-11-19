@@ -16,11 +16,13 @@ class NoiseModel(nn.Module):
   def __init__(self):
     super().__init__()
     self.w = nn.Parameter(torch.ones(1, dtype=torch.float32))
+    self.sample_rate = 48000
+    self.freq = 440.0
 
   def forward(self, x: torch.Tensor) -> torch.Tensor:
-    noise = torch.randn(x.shape)
-    noise = (noise / noise.max() * 0.01 - 0.005)
-    a = self.w * x + noise
+    t = torch.arange(0, x.shape[0]) / self.sample_rate
+    sine_waveform = torch.sin(2 * torch.pi * self.freq * t)
+    a = self.w * x + sine_waveform
     return a
 
 model = NoiseModel()

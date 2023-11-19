@@ -1,9 +1,5 @@
 importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.min.js");
 
-// onnxruntime
-ort.env.debug = false;
-ort.env.wasm.simd = false;
-ort.env.wasm.numThreads = 1;
 const ONNX_MODEL_PATH = '/model.onnx'
 const ONNX_WASM_PATH = '/wasm_files/ort-wasm.wasm'
 
@@ -20,16 +16,20 @@ class NoiseCancellationWorker {
   }
 
   async initModel() {
+    ort.env.debug = false;
+    ort.env.wasm.simd = false;
+    ort.env.wasm.numThreads = 1;
     ort.env.wasm.wasmPaths = {
         'ort-wasm.wasm': self.location.origin + ONNX_WASM_PATH,
     };    
+
     this.model = await ort.InferenceSession.create(self.location.origin + ONNX_MODEL_PATH, {
       executionProviders: ['wasm'],
     });
   }
 
   async registerListeners() {
-    const { port1: portToWorklet, port2: portToThis } = new MessageChannel();
+    const { port1: portToWorklet, port2: portToWorker } = new MessageChannel();
 
     portToWorklet.onmessage = async (e) => {
       const { input } = e.data;
@@ -44,7 +44,7 @@ class NoiseCancellationWorker {
         [buffer],
       );
     };
-    self.postMessage(portToThis, [portToThis]);
+    self.postMessage(portToWorker, [portToWorker]);
   }
 
   async process(input_array) {
