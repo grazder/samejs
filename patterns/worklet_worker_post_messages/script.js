@@ -2,23 +2,32 @@
 
 // Here we create the worker so that it is visible anywhere in the code.
 let worker;
+let audioContext = null;
 
 // Let's create a "start" button listener to turn your pipeline on.
 window.addEventListener("load", (event) => {
   document.getElementById("start").addEventListener("click", startPipeline);
 });
 
+window.addEventListener("load", (event) => {
+  document.getElementById("stop").addEventListener("click", stopPipeline);
+});
+
+async function stopPipeline(enent) {
+    await audioContext.close();
+    audioContext = null;
+}
+
 // Let's start our pipeline
 async function startPipeline(event) {
     // Let's create AudioContex first.
     // Sample Rate is an important parameter because most ML models are trained on data with a single sample rate.
-    const audioContext = new AudioContext({sampleRate: 48000});
-
-    ringbuffer_url = new URL('data_structures/ringbuffer.js', location.href)
+    audioContext = new AudioContext({sampleRate: 48000});
 
     const workletUrl = await URLFromFiles([
-        'audio-worklet.js', ringbuffer_url
+        'audio-worklet.js', 'data_structures/ringbuffer.js'
     ])
+
     // 1. Creating AudioWorklet from `audio_worklet.js`
     await audioContext.audioWorklet.addModule(workletUrl);
 
@@ -34,7 +43,7 @@ async function startPipeline(event) {
     worker = new Worker('worker.js');
     
     // 5. Creating AudioWorkletNode 
-    let audioProcessor = new AudioWorkletNode(audioContext, 'audio-worklet-example')
+    audioProcessor = new AudioWorkletNode(audioContext, 'audio-worklet-example')
 
     // 6. Forward message port to 
     worker.onmessage = (e) => {

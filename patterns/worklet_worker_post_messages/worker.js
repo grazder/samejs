@@ -32,10 +32,7 @@ class NoiseCancellationWorker {
     const { port1: portToWorklet, port2: portToWorker } = new MessageChannel();
 
     portToWorklet.onmessage = async (e) => {
-      const { input } = e.data;
-
-      const inputArray = new Float32Array(input);
-      const { buffer } = await this.process(inputArray);
+      const { buffer } = await this.process(e.data[0]);
 
       portToWorklet.postMessage(
         {
@@ -44,6 +41,7 @@ class NoiseCancellationWorker {
         [buffer],
       );
     };
+
     self.postMessage(portToWorker, [portToWorker]);
   }
 
