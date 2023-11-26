@@ -13,3 +13,8 @@ cp -r libdf/pkg ../samejs/deepfilternet3/wasm_worklet_worker_sharedarraybuffer/
 cp models/DeepFilterNet3_onnx.tar.gz ../samejs/deepfilternet3/wasm_worklet_worker_sharedarraybuffer/
 cd ../samejs/deepfilternet3/wasm_worklet_worker_sharedarraybuffer/
 ```
+
+To run demo:
+```
+node node_server.js
+```
