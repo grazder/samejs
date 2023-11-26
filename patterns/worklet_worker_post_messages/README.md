@@ -3,6 +3,8 @@
 ## Try it
 
 ```
+mkdir wasm_files
+wget -O wasm_files/ort-wasm.wasm https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort-wasm.wasm
 python -m http.server -p 8080
 ```
 
