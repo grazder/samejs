@@ -4,12 +4,13 @@ class AudioWorkletExample extends AudioWorkletProcessor {
     denoiseFrameSize = 1920;
     workletFrameSize = 128;
     ringBufferLength = 10000;
+    channel_count = 1;
     
     constructor(options) {
       super();
 
-      this.inputBuffer = new RingBuffer(this.ringBufferLength, 1);
-      this.outputBuffer = new RingBuffer(this.ringBufferLength, 1);
+      this.inputBuffer = new RingBuffer(this.ringBufferLength, this.channel_count);
+      this.outputBuffer = new RingBuffer(this.ringBufferLength, this.channel_count);
       this.planarBuffer = new Float32Array(this.denoiseFrameSize);
 
       this.port.onmessage = (e) => {
@@ -20,16 +21,26 @@ class AudioWorkletExample extends AudioWorkletProcessor {
                   const outputArray = new Float32Array(output);
                   this.outputBuffer.push([outputArray]);
               }
+          }
+          else {
+                this.portToWorker = null;
           };
       };
     }
 
     process(inputs, outputs) {
+        const input = inputs[0];
+        const output = outputs[0];
+
         if (!this.portToWorker) {
-          return true;
+            for (let channel = 0; channel < this.channel_count; ++channel) {
+              output[channel].set(input[channel]);
+            }
+        
+            return true;
         }
 
-        this.inputBuffer.push(inputs[0]);
+        this.inputBuffer.push(input);
 
         if (this.inputBuffer.framesAvailable > this.denoiseFrameSize) {
             this.inputBuffer.pull([this.planarBuffer]);
@@ -38,7 +49,7 @@ class AudioWorkletExample extends AudioWorkletProcessor {
         }
         
         if (this.outputBuffer.framesAvailable >= this.workletFrameSize) {
-            this.outputBuffer.pull(outputs[0]);
+            this.outputBuffer.pull(output);
         } else {
             console.warn("WARNING! AudioWorklet: Not enogh samples");
         }
