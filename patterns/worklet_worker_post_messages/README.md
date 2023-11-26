@@ -11,6 +11,7 @@ python -m http.server -p 8080
 ```
 import torch
 import torch.nn as nn
+from typing import Tuple
 
 class NoiseModel(nn.Module):
   def __init__(self):
@@ -19,21 +20,21 @@ class NoiseModel(nn.Module):
     self.sample_rate = 48000
     self.freq = 440.0
 
-  def forward(self, x: torch.Tensor) -> torch.Tensor:
-    t = torch.arange(0, x.shape[0]) / self.sample_rate
-    sine_waveform = torch.sin(2 * torch.pi * self.freq * t)
+  def forward(self, x: torch.Tensor, time: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    t = torch.arange(time.item(), time.item() + x.shape[0]) / self.sample_rate
+    sine_waveform = torch.sin(2 * torch.pi * self.freq * t) / 100
     a = self.w * x + sine_waveform
-    return a
+    return a, torch.tensor(time.item() + x.shape[0])
 
 model = NoiseModel()
 
 model = torch.jit.script(model)
 
 torch.onnx.export(model,
-                  (torch.ones(100, dtype=torch.float32)),
+                  (torch.ones(100, dtype=torch.float32), torch.tensor([0], dtype=torch.float32)),
                   'model.onnx',
                   verbose=True,
-                  input_names=['x'],
-                  output_names=['out'],
+                  input_names=['x', 'time'],
+                  output_names=['out', 'new_time'],
                   dynamic_axes={"x": {0: "length"}})
 ```

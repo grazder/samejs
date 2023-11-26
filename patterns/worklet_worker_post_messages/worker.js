@@ -3,7 +3,7 @@ importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.min.
 const ONNX_MODEL_PATH = '/model.onnx'
 const ONNX_WASM_PATH = '/wasm_files/ort-wasm.wasm'
 
-class NoiseCancellationWorker {
+class ExampleWorker {
   model;
 
   constructor() {
@@ -26,6 +26,7 @@ class NoiseCancellationWorker {
     this.model = await ort.InferenceSession.create(self.location.origin + ONNX_MODEL_PATH, {
       executionProviders: ['wasm'],
     });
+    this.time = new ort.Tensor('float32', new Array(1).fill(0), [1]);
   }
 
   async registerListeners() {
@@ -50,10 +51,13 @@ class NoiseCancellationWorker {
 
     const outputMap = await this.model.run({
       x: inputFrame,
+      time: this.time
     });
+
+    this.time = outputMap.new_time
     
     return outputMap.out.data;
   }
 }
 
-new NoiseCancellationWorker();
+new ExampleWorker();
