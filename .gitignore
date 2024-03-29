@@ -1,0 +1,6 @@
+pkg
+*.onnx
+*.ort
+*.wasm
+*.tar.gz
+*.TAR

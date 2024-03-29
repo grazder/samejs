@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AudioWorklet Demo</title>
+    <meta charset="utf-8" />
+    <script>
+      var exports = {};
+    </script>
+    <script src="utils.js"></script>
+    <script src="ringbuffer.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <h1>AudioWorklet Demo</h1>
+
+    <p>
+      This page is a demo for the <code>AudioWorklet</code> API, which lets you
+      process audio in the background using a worklet.
+    </p>
+
+    <button id="toggle">Toggle Sound</button>
+
+    <label for="gain">Volume: </label>
+    <input id="gain" type="range" min="0" max="40" />
+
+  </body>
+</html>

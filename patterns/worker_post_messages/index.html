@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AudioWorklet Demo</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- import the webpage's javascript file -->
+    <script src="script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.wasm.min.js"></script>
+  </head>
+  <body>
+    <h1>Worker - Worklet via postMessages</h1>
+
+    <p>
+      This page is a demo for the <code>Worker - Worklet via postMessages</code>, which lets you
+      run ONNX model in Worker.
+    </p>
+
+    <button id="start">Start Recording</button>
+    <button id="toggle">Toggle Model</button>
+    <button id="stop">Stop Recording</button>
+
+  </body>
+</html>
